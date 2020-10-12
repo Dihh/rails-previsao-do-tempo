@@ -43,10 +43,24 @@ class PrevisaoController < ApplicationController
   }.freeze
 
   OPENWEATHER_APPID = ENV['OPENWEATHER_APPID']
+  GOOGLE_API_KEY = ENV['GOOGLE_API_KEY']
 
   def index
-    city = params[:city] || 'Belo Horizonte'
-    uri = URI("http://api.openweathermap.org/data/2.5/weather?q=#{city}&appid=#{OPENWEATHER_APPID}&lang=pt_br&units=metric")
+    address = params[:city] || 'Belo Horizonte'
+
+    uri = URI("https://maps.googleapis.com/maps/api/geocode/json?address=#{address}&key=#{GOOGLE_API_KEY}")
+    res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
+      request = Net::HTTP::Get.new uri
+      http.request request
+    end
+    @addr = JSON.parse(res.body)
+    puts JSON.pretty_generate(@addr)
+
+    lat = @addr['results'][0]['geometry']['location']['lat']
+    lon = @addr['results'][0]['geometry']['location']['lng']
+
+    uri = URI("http://api.openweathermap.org/data/2.5/weather?lat=#{lat}&lon=#{lon}&appid=#{OPENWEATHER_APPID}&lang=pt_br&units=metric")
+
     res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
       request = Net::HTTP::Get.new uri
       http.request request
@@ -56,7 +70,7 @@ class PrevisaoController < ApplicationController
     @previsao['time'] = @previsao['time'].split(' ')[1][0..-4]
     # puts JSON.pretty_generate(@previsao)
 
-    uri = URI("https://api.openweathermap.org/data/2.5/forecast?q=#{city}&appid=#{OPENWEATHER_APPID}&lang=pt_br&units=metric")
+    uri = URI("https://api.openweathermap.org/data/2.5/forecast?lat=#{lat}&lon=#{lon}&appid=#{OPENWEATHER_APPID}&lang=pt_br&units=metric")
     res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
       request = Net::HTTP::Get.new uri
       http.request request
