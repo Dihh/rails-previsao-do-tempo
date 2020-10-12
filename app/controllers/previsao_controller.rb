@@ -54,7 +54,7 @@ class PrevisaoController < ApplicationController
       http.request request
     end
     @addr = JSON.parse(res.body)
-    puts JSON.pretty_generate(@addr)
+    # puts JSON.pretty_generate(@addr)
 
     lat = @addr['results'][0]['geometry']['location']['lat']
     lon = @addr['results'][0]['geometry']['location']['lng']
