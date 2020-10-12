@@ -1,0 +1,69 @@
+<div class="main <%= @previsao["weather"][0]['main'] %>">
+    <div class="condition"><%= @previsao["weather"][0]["description"] %></div>
+    <div class="temp"><%= @previsao["main"]["temp"].round(0) %><sup>ºc</sup></div>
+    <div class="city"><%= @previsao["name"] %></div>
+    <div class="time"><%= @previsao["time"] %></div>
+
+    <div class="week">
+        <% @days.each_with_index do |day, index|  %>
+        <div style=" animation-delay: <%= ((index.to_f + 1) / 5) + 0.5 %>s;">
+            <div><%= day['day_name'] %></div>
+            <div>
+                <i class="<%= day['icon'] %>"></i>
+            </div>
+            <div><%= day['main']['temp_min'].round(0) %> | <%= day['main']['temp_max'].round(0) %></div>
+        </div>
+        <% end %>
+    </div>
+
+    <div class="hours">
+        <% @hours.each_with_index do |hour, index|  %>
+        <div class="hour" style=" animation-delay: <%= ((index.to_f + 1) / 5) + 0.5 %>s;">
+            <div><%= hour['time'] %></div>
+        </div>
+        <% end %>
+        <div class="hours-animation-slide "></div>
+
+    </div>
+
+
+    <div id="chart_div" class="hours-chart">
+    </div>
+
+</div>
+
+<div class="menu">
+    <div class="change-city">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <div class="menu-item">
+
+        <form action="./" class="search-form">
+            <input class="search" type="text" name="city" placeholder="Pesquisar">
+            <input type="submit">
+        </form>
+
+        <div class="menu-city">
+            <%= @previsao["name"] %>
+        </div>
+        <div class="menu-country">
+            <%= @previsao["sys"]["country"] %>
+        </div>
+    </div>
+
+    <div class="menu-background"></div>
+</div>
+
+<div class="menu-foreground">
+    <div class="loader"></div>
+</div>
+
+<%= javascript_tag do %>
+var data1 = [
+<% @hours.each do |hour|  %>
+['', <%= hour['main']['temp'].round(0) %>, '<%= hour['main']['temp'].round(0) %>'],
+<% end %>
+];
+<% end %>
+<%= javascript_pack_tag 'previsao' %>

@@ -1,0 +1,294 @@
+// Place all the styles related to the home controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: https://sass-lang.com/
+
+.Sunny, .Clouds, .Clear{
+    background: linear-gradient(0deg,  rgba(112,235,255,1) 0%, rgba(0,86,255,1) 75%);
+    background-size: cover;
+}
+
+.Night{
+    background: linear-gradient(0deg, rgba(5, 0, 18, 1) 0%, rgb(28, 28, 28) 75%);
+    background-size: cover;
+}
+
+.Rain, .Thunderstorm{
+    background: linear-gradient(0deg, rgba(12, 0, 45, 1) 0%, rgb(0, 9, 140)  75%);
+    background-size: cover;
+}
+
+.main{
+
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+       
+    .condition{
+        font-size: 2em;
+        margin-bottom: 20px;
+        text-transform: capitalize;
+        opacity: 0;
+        animation: show-item 1s forwards;
+    }
+
+    .temp{
+        font-size: 7em;
+        margin-bottom: 20px;
+    }
+
+    .city{
+        font-size: 2em;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .time{
+        font-size: 2em;
+        font-weight: 100;
+        margin-bottom: 10px;
+    }
+
+    .week, .hours{
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        width: 100%;
+        padding: 20px 15%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        background: #333333;
+        position: relative;
+        left: 100%;
+        right: 0px;
+        animation: slide-in 1s forwards;
+    }
+
+    .week div{
+        opacity: 0;
+        animation: show-item 1s forwards;
+    }
+
+    .hour{
+        opacity: 0;
+        animation: show-item 1s forwards;
+    }
+
+    .hours-chart{
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        width: 100%;
+        height: 150px;
+        background: #333333;
+        overflow: hidden;
+        position: relative;
+        left: 100%;
+        right: 0px;
+        animation: slide-in 1s forwards;
+        overflow: hidden;
+    }
+
+    .hours-animation-slide{
+        position: absolute;
+        background: #333333;
+        top: 50px;
+        bottom: -150px;
+        right: 10px;
+        left: 0%;
+        z-index: 10;
+        animation: slide-out 3s forwards;
+        animation-delay: .5s;
+    }
+
+    @keyframes slide-out {
+        100% { left: 100%; }
+    }
+
+    @keyframes slide-in {
+        100% { left: 0%; }
+    }
+
+    @keyframes show-item {
+        100% { opacity: 1; }
+    }
+
+    .hours-animation-animate{
+        transition: all .5s;
+        left: 100%;
+    }
+
+    .week > div, .hours > div{
+        text-align: center;
+
+        div, img{
+            margin-top: 10px;
+        }
+    }
+
+    sup{
+        font-size: 0.4em;
+    }
+}
+
+.change-city{
+    position: fixed;
+    color: #fff;
+    font-size: 1.5rem;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+
+    input{
+        display: none
+    }
+}
+
+.menu{
+
+    .menu-item{
+        position: fixed;
+        top: 0px;
+        bottom: 0px;
+        right: -50%;
+        left:   110%;
+        background: #333;
+        z-index: 200;
+        box-shadow: -5px 0px 5px 0px #222;
+        display: flex;
+        overflow: hidden;
+        flex-direction: column;
+        color: #fff;
+        // justify-content: center;
+        align-items: center;
+        padding: 30px 30px 30px 30px;
+        
+        .search{
+            height: 2rem;
+            font-size: 1rem;
+            padding: 0px 10px 0px 10px;
+            border: solid 1px #222;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .search-form{
+            width: 100%;
+        }
+
+        .search-form input[type=submit]{
+            display: none;
+        }
+
+        .menu-city{
+            font-size: 2rem;
+            margin-top: 50px;
+        }
+
+        .menu-country{
+            font-size: 1.5rem;
+            margin-top: 20px;
+        }
+    }
+
+    .opened{
+        right: 0%;
+        left:   70%;
+        transition: all .5s;
+    }
+
+    .closed{
+        right: -50%;
+        transition: all .5s;
+    }
+
+    #menuCity{
+        display: none
+    }
+
+    .menu-background{
+        position: absolute;
+        top: 0px;
+        bottom: 0px;
+        right: 0px;
+        left: 0px;
+        background: #33333370;
+        z-index: 190;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .temp-span{
+        width: 100%;
+        height: 100%;
+        background: yellow;
+        display: block;
+    }
+}
+
+.loader {
+    border: 9px solid #fff;
+    border-radius: 50%;
+    border-top: 8px solid #1900ff;
+    width: 80px;
+    height: 80px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+    display: none;
+  }
+  
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.menu-foreground{
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background: #333;
+    animation: open-page 1s forwards;
+}
+
+.menu-foreground-out{
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background: #333;
+    animation: open-page 1s reverse;
+}
+
+@keyframes open-page {
+    0%{
+        top: 0px;
+        bottom: 0px;
+        left: 0px;
+        right: 0px;
+        background: #333;
+        z-index: 100;
+    }
+
+    100%{
+        top: 20px;
+        bottom: 100%;
+        left: 100%;
+        right: 20px;
+        background: #fff;
+    }
+}
