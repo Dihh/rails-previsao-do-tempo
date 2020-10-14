@@ -46,18 +46,44 @@ class PrevisaoController < ApplicationController
   GOOGLE_API_KEY = ENV['GOOGLE_API_KEY']
 
   def index
-    address = params[:city] || 'Belo Horizonte'
+    if params[:city]
+      address = params[:city] || 'Belo Horizonte'
+      @user_location = params[:city]
+      uri = URI("https://maps.googleapis.com/maps/api/geocode/json?address=#{address}&key=#{GOOGLE_API_KEY}")
+      res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
+        request = Net::HTTP::Get.new uri
+        http.request request
+      end
+      @addr = JSON.parse(res.body)
+      # puts JSON.pretty_generate(@addr)
+      lat = @addr['results'][0]['geometry']['location']['lat']
+      lon = @addr['results'][0]['geometry']['location']['lng']
+      @addr = JSON.parse(res.body)
+      @location = @addr['results'][0]['address_components'].map do |el|
+        el['short_name']
+      end
+      @location = @location[1..2].join(' ')
+      # puts JSON.pretty_generate(@addr)
+    elsif params[:lat] && params[:long]
+      @user_location = [params[:lat], params[:long]]
+      lat = params[:lat]
+      lon = params[:long]
 
-    uri = URI("https://maps.googleapis.com/maps/api/geocode/json?address=#{address}&key=#{GOOGLE_API_KEY}")
-    res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
-      request = Net::HTTP::Get.new uri
-      http.request request
+      uri = URI("https://maps.googleapis.com/maps/api/geocode/json?latlng=#{lat},#{lon}&key=#{GOOGLE_API_KEY}")
+      res = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
+        request = Net::HTTP::Get.new uri
+        http.request request
+      end
+      @addr = JSON.parse(res.body)
+      @location = @addr['results'][0]['address_components'].map do |el|
+        el['short_name']
+      end
+      @location = @location[0..2].join(' ')
+      # puts JSON.pretty_generate(@addr)
+    else
+      @user_location = nil
+      return
     end
-    @addr = JSON.parse(res.body)
-    # puts JSON.pretty_generate(@addr)
-
-    lat = @addr['results'][0]['geometry']['location']['lat']
-    lon = @addr['results'][0]['geometry']['location']['lng']
 
     uri = URI("http://api.openweathermap.org/data/2.5/weather?lat=#{lat}&lon=#{lon}&appid=#{OPENWEATHER_APPID}&lang=pt_br&units=metric")
 

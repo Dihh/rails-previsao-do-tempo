@@ -1,7 +1,8 @@
-<div class="main <%= @previsao["weather"][0]['main'] %>">
+<div class="main <%= @user_location ? @previsao["weather"][0]['main'] : 'Sunny' %>">
+    <% if @user_location %>
     <div class="condition"><%= @previsao["weather"][0]["description"] %></div>
     <div class="temp"><%= @previsao["main"]["temp"].round(0) %><sup>ºc</sup></div>
-    <div class="city"><%= @previsao["name"] %></div>
+    <div class="city"><%= @location %></div>
     <div class="time"><%= @previsao["time"] %></div>
 
     <div class="week">
@@ -30,6 +31,11 @@
     <div id="chart_div" class="hours-chart">
     </div>
 
+    <% else %>
+    <div class="week">
+        <h1>Pesquise um endereço:</h1>
+    </div>
+    <% end %>
 </div>
 
 <div class="menu">
@@ -45,20 +51,45 @@
         </form>
 
         <div class="menu-city">
-            <%= @previsao["name"] %>
+            <%= @user_location ? @location  : 'Pesquise um Endereço' %>
         </div>
         <div class="menu-country">
-            <%= @previsao["sys"]["country"] %>
+            <%= @user_location ? @previsao["sys"]["country"] : 'Ou compartilhe sua localização'%>
         </div>
     </div>
 
     <div class="menu-background"></div>
 </div>
 
-<div class="menu-foreground">
+<div class=" <%=  @user_location ? 'menu-foreground' : '' %>">
     <div class="loader"></div>
 </div>
 
+
+
+<% if !@user_location %>
+<script>
+    navigator.geolocation.getCurrentPosition(async data => {
+        const address = {
+            latitude: data.coords.latitude,
+            longitude: data.coords.longitude
+        };
+        document.querySelector('.menu-item').style.display = 'none'
+        document.querySelector('.loader').style.display = 'initial'
+        document.querySelector('.menu-item').classList.remove('opened')
+        document.querySelector('.menu-item').classList.add('closed')
+        document.querySelector('.week').remove()
+        const div = document.createElement('div')
+        div.classList.add('menu-foreground-out')
+        document.body.appendChild(div)
+        location.href = `./?lat=${address.latitude}&long=${address.longitude}`
+    }, error => {
+        document.querySelector('.menu-item').classList.add('opened')
+        document.querySelector('.menu-background').style.display = 'block'
+        document.querySelector('.week').remove()
+    });
+</script>
+<% else %>
 <%= javascript_tag do %>
 var data1 = [
 <% @hours.each do |hour|  %>
@@ -67,3 +98,16 @@ var data1 = [
 ];
 <% end %>
 <%= javascript_pack_tag 'previsao' %>
+<% end %>
+
+<script>
+    document.querySelector('form').addEventListener('submit', () => {
+        console.log(0)
+        document.querySelector('.loader').style.display = 'initial'
+        document.querySelector('.menu-item').classList.remove('opened')
+        document.querySelector('.menu-item').classList.add('closed')
+        const div = document.createElement('div')
+        div.classList.add('menu-foreground-out')
+        document.body.appendChild(div)
+    })
+</script>
