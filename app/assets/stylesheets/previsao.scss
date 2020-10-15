@@ -292,3 +292,21 @@
         background: #fff;
     }
 }
+
+@media only screen and (max-width: 768px) {
+    body{
+        font-size: 12px;
+    }
+
+    .city{
+        padding: 10px;
+        text-align: center;
+        font-size: 1.5em !important;
+    }
+
+   .menu{
+       .opened{
+        left: 10%;
+       }
+   }
+  }
